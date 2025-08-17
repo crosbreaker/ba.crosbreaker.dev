@@ -24,7 +24,7 @@ fi
 board=$(echo "$BOARD" | tr '[:upper:]' '[:lower:]')
 
 
-scripthost="https://crosbreaker.pages.dev/ba"
+scripthost="https://crosbreaker.dev/"
 kernroothost="https://nightly.link/crosbreaker/sh1mmer/actions/runs/17003742014/$board"
 scriptname="br0ker_part2.sh"
 directory="/br0ker"
