@@ -174,7 +174,7 @@ for i in 3 5; do
 done
 
 if [ -z "$USE_KERN" ]; then
-	kernroothost="https://nightly.link/crosbreaker/sh1mmer/actions/runs/17003742014/$board"
+	kernroothost="https://nightly.link/crosbreaker/sh1mmer/actions/runs/17003742014/$BOARD"
 	directory="/br0ker"
 	echo "Starting br0ker payload download ($BOARD)"
  	cd "$directory"
