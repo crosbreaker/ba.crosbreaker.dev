@@ -176,14 +176,14 @@ done
 if [ -z "$USE_KERN" ]; then
 	kernroothost="https://nightly.link/crosbreaker/sh1mmer/actions/runs/17003742014/$board"
 	directory="/br0ker"
-	echo "Starting br0ker payload download ($board)"
+	echo "Starting br0ker payload download ($BOARD)"
  	cd "$directory"
 	echo "Downloading root. THIS WILL TAKE TIME!  THIS IS LIKELY NOT FROZEN"
 	curl --progress-bar -LO ""$kernroothost"_root.gz.zip" || fail "root.gz failed to download"
 	echo "Downloading kern"
 	curl -LO ""$kernroothost"_kern.gz.zip" || fail "kern.gz failed to download"
-	unzip ""$board"_root.gz.zip" || fail "failed to unzip root.gz.zip"
-	unzip ""$board"_kern.gz.zip" || fail "failed to unzip kern.gz.zip"
+	unzip ""$BOARD"_root.gz.zip" || fail "failed to unzip root.gz.zip"
+	unzip ""$BOARD"_kern.gz.zip" || fail "failed to unzip kern.gz.zip"
 	cd /
 	[ -d "$PAYLOAD_DIR" ] || fail "Missing mounted payload directory! Ensure the USB drive/SD card is still plugged in!"
 	KERN_PAYLOAD="$PAYLOAD_DIR/kern.gz"
