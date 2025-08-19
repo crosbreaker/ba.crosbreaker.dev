@@ -25,7 +25,7 @@ board=$(echo "$BOARD" | tr '[:upper:]' '[:lower:]')
 
 
 scripthost="https://cdn.crosbreaker.dev/"
-kernroothost="https://nightly.link/crosbreaker/sh1mmer/actions/runs/17003742014/$board"
+kernroothost="https://nightly.link/crosbreaker/sh1mmer/actions/runs/17080634078/$board"
 scriptname="br0ker_part2.sh"
 directory="/br0ker"
 echo "Starting br0ker payload download ($board)"
