@@ -11,7 +11,7 @@ set -eE
 SCRIPT_DATE="[2025-08-03]"
 PAYLOAD_DIR=/br0ker
 RECOVERY_KEY_LIST="$SCRIPT_DIR"/short_recovery_keys.txt
-
+kernroothost="https://nightly.link/crosbreaker/sh1mmer/actions/runs/17084932935/$BOARD"
 MNT=
 TMPFILE=
 
@@ -174,8 +174,7 @@ for i in 3 5; do
 done
 
 if [ -z "$USE_KERN" ]; then
-	kernroothost="https://nightly.link/crosbreaker/sh1mmer/actions/runs/17080634078/$BOARD"
-	directory="/br0ker"
+    directory="/br0ker"
 	echo "Starting br0ker payload download ($BOARD)"
  	cd "$directory"
 	echo "Downloading root. THIS WILL TAKE TIME!  THIS IS LIKELY NOT FROZEN"
