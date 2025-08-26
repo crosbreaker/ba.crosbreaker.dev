@@ -1,6 +1,11 @@
 #!/bin/sh
 # written mostly by HarryJarry1
 # get_stateful take from https://github.com/applefritter-inc/BadApple-icarus
+fail(){
+	printf "$1\n"
+	printf "exiting...\n"
+	exit
+}
 main(){
 echo   
 get_internal
@@ -20,12 +25,15 @@ umount /localroot/dev
 umount /localroot
 rmdir /localroot
 crossystem disable_dev_request=1
-
+mount "$intdis$intdis_prefix"1 /stateful || mountlvm
+rm -rf /stateful/*
+umount /stateful
 }
-fail(){
-	printf "$1\n"
-	printf "exiting...\n"
-	exit
+mountlvm(){
+     vgchange -ay #active all volume groups
+     volgroup=$(vgscan | grep "Found volume group" | awk '{print $4}' | tr -d '"')
+     echo "found volume group:  $volgroup"
+     mount "/dev/$volgroup/unencrypted" /stateful || fail "couldnt mount p1 or lvm group.  Please recover"
 }
 get_internal() {
 	# get_largest_cros_blockdev does not work in BadApple.
@@ -55,7 +63,7 @@ get_internal() {
 		;;
 	esac
 }
-read -p "NOTE if you have not freshly recovered, THIS WILL BRICK UR CHROMEBOOK UNTIL NEXT RECOVERY!  Proceed?(y/n) " -n 1 -r
+read -p "are you sure you want to run daub?  (y/n) " -n 1 -r
 echo   
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     main
