@@ -28,6 +28,7 @@ crossystem disable_dev_request=1
 mount "$intdis$intdis_prefix"1 /stateful || mountlvm
 rm -rf /stateful/*
 umount /stateful
+echo "Done!  Run reboot -f to reboot."
 }
 mountlvm(){
      vgchange -ay #active all volume groups
