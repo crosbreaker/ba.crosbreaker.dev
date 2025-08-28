@@ -2,7 +2,7 @@
 
 echo "=== ChromeOS Kernel Version Block (CKAUB) Script ==="
 echo "Made by Lxrd and Codenerd, with credits to Con for finding a new way to powerwash with daub using lvm and fanq for helping with the script + emotional support"
-echo "Credits to Kxtz for the original idea of KAUB. He had KAUB before but he never released it, we just managed to find it ourselves"
+echo "Credits to Kxtz for the original idea of KAUB. He had KAUB and told us how to do it, so we decided to remake it even though he told us to keep it private ROFL"
 echo "Brought to you by crosbreaker team, crosbreaker.dev"
 echo "WARNING: This will modify your Chromebook partitions."
 echo "Ensure you have a recovery image ready!"
