@@ -1,5 +1,6 @@
 board=$1
 recoveryver=$2
+mountdir="/recoveryimage"
 fail() {
     printf "%b\n" "$1" >&2
     printf "error occurred\n" >&2
@@ -27,5 +28,13 @@ findimage(){ # Taken from murkmod
     fi
 }
 findimage
+mkdir "$mountdir"
 curl --progress-bar -k "$FINAL_URL" -o recovery.zip || fail "Failed to download recovery image"
- 
+unzip recovery.zip || fail "failed to unzip recovery image"
+rm recovery.zip
+FILENAME=$(find . -maxdepth 2 -name "chromeos_*.bin")
+echo "Found recovery image from archive at $FILENAME"
+LOOPDEV=$(losetup -f) || fail "could not find an available loop"
+losetup -P "$LOOPDEV" "$FILENAME" || fail "Could not losetup image"
+mount "$LOOPDEV"p3 "$mountdir" -o ro
+# to be contuined
