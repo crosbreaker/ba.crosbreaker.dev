@@ -1,5 +1,5 @@
 board=nissa # testing value
-recover=138 # testing value
+recoveryver=138 # testing value
 findimage(){ # Taken from murkmod
     echo "Attempting to find recovery image from https://github.com/MercuryWorkshop/chromeos-releases-data data..."
     local mercury_data_url="https://raw.githubusercontent.com/MercuryWorkshop/chromeos-releases-data/refs/heads/main/data.json"
