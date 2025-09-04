@@ -1,5 +1,10 @@
-board=nissa # testing value
-recoveryver=138 # testing value
+board=$1
+recoveryver=$2
+fail() {
+    printf "%b\n" "$1" >&2
+    printf "error occurred\n" >&2
+    exit 1
+}
 findimage(){ # Taken from murkmod
     echo "Attempting to find recovery image from https://github.com/MercuryWorkshop/chromeos-releases-data data..."
     local mercury_data_url="https://raw.githubusercontent.com/MercuryWorkshop/chromeos-releases-data/refs/heads/main/data.json"
@@ -22,4 +27,5 @@ findimage(){ # Taken from murkmod
     fi
 }
 findimage
-echo "$FINAL_URL"
+curl --progress-bar -k "$FINAL_URL" -o recovery.zip || fail "Failed to download recovery image"
+ 
