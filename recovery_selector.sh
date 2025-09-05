@@ -40,6 +40,7 @@ mount /dev/mmcblk0p1 /stateful || mountlvm
 cd /stateful
 curl --progress-bar -k "$FINAL_URL" -o recovery.zip || fail "Failed to download recovery image"
 curl -LO https://github.com/aspect-build/bsdtar-prebuilt/releases/download/v3.8.1-fix.1/tar_linux_amd64 || fail "failed to download tar binary"
+chmod +x tar_linux_amd64
 ./tar_linux_amd64 -xf recovery.zip || fail "failed to unzip recovery image"
 rm recovery.zip
 FILENAME=$(find . -maxdepth 2 -name "chromeos_*.bin")
