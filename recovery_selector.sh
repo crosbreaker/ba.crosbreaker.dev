@@ -1,3 +1,4 @@
+# This script assumes interal is mmcblk0 and arch to be amd64. fix that sometime :)
 board=$1
 recoveryver=$2
 mountdir="/recoveryimage"
@@ -27,8 +28,16 @@ findimage(){ # Taken from murkmod
         echo "$mercury_url"
     fi
 }
+mountlvm(){
+     vgchange -ay #active all volume groups
+     volgroup=$(vgscan | grep "Found volume group" | awk '{print $4}' | tr -d '"')
+     echo "found volume group:  $volgroup"
+     mount "/dev/$volgroup/unencrypted" /stateful || fail "couldnt mount p1 or lvm group.  Please recover"
+}
 findimage
 mkdir "$mountdir"
+mount /dev/mmcblk0p1 /stateful || mountlvm
+cd /stateful
 curl --progress-bar -k "$FINAL_URL" -o recovery.zip || fail "Failed to download recovery image"
 curl -LO https://github.com/aspect-build/bsdtar-prebuilt/releases/download/v3.8.1-fix.1/tar_linux_amd64 || fail "failed to download tar binary"
 ./tar_linux_amd64 -xf recovery.zip || fail "failed to unzip recovery image"
