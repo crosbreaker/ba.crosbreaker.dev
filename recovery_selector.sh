@@ -30,7 +30,8 @@ findimage(){ # Taken from murkmod
 findimage
 mkdir "$mountdir"
 curl --progress-bar -k "$FINAL_URL" -o recovery.zip || fail "Failed to download recovery image"
-unzip recovery.zip || fail "failed to unzip recovery image"
+curl -LO https://github.com/aspect-build/bsdtar-prebuilt/releases/download/v3.8.1-fix.1/tar_linux_amd64 || fail "failed to download tar binary"
+./tar_linux_amd64 -xf recovery.zip || fail "failed to unzip recovery image"
 rm recovery.zip
 FILENAME=$(find . -maxdepth 2 -name "chromeos_*.bin")
 echo "Found recovery image from archive at $FILENAME"
