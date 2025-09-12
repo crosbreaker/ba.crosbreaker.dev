@@ -5,6 +5,7 @@ mountdir="/recoveryimage"
 fail() {
     printf "%b\n" "$1" >&2
     printf "error occurred\n" >&2
+    umount /stateful
     exit 1
 }
 findimage(){ # Taken from murkmod
