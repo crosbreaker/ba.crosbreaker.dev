@@ -49,4 +49,8 @@ echo "Found recovery image from archive at $FILENAME"
 LOOPDEV=$(losetup -f) || fail "could not find an available loop"
 losetup -P "$LOOPDEV" "$FILENAME" || fail "Could not losetup image"
 mount "$LOOPDEV"p3 "$mountdir" -o ro
-# to be contuined
+echo "mounting system components"
+mount --bind /dev "$mountdir"/dev
+mount --bind /sys "$mountdir"/sys
+echo "dropping shell in image's rootfs, not sure what to do from here."
+chroot "$mountdir"
