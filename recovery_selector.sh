@@ -27,6 +27,8 @@ findimage(){ # Taken from murkmod
         FINAL_URL="$mercury_url"
         MATCH_FOUND=1
         echo "$mercury_url"
+	else
+		fail "Failed to find your recovery image"
     fi
 }
 mountlvm(){
