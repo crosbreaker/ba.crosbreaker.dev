@@ -1,7 +1,6 @@
 #!/bin/sh
 # This script assumes arch to be amd64. fix that sometime :)
 recoveryver=$1
-mountdir="/recoveryimage"
 fail() {
     printf "%b\n" "$1" >&2
     printf "error occurred\n" >&2
@@ -106,7 +105,6 @@ esac
 echo "Found internal disk: $TARGET_DEVICE"
 echo "Found partition selection:  $TARGET_DEVICE_P"
 findimage
-mkdir "$mountdir"
 mount "$TARGET_DEVICE_P"1 /stateful || mountlvm
 cd /stateful
 curl --progress-bar -k "$FINAL_URL" -o recovery.zip || fail "Failed to download recovery image"
