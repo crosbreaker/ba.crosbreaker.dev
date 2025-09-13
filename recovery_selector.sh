@@ -1,7 +1,6 @@
 #!/bin/sh
 # This script assumes arch to be amd64. fix that sometime :)
-board=$1
-recoveryver=$2
+recoveryver=$1
 mountdir="/recoveryimage"
 fail() {
     printf "%b\n" "$1" >&2
@@ -63,7 +62,23 @@ get_fixed_dst_drive() {
 	fi
 	echo "${dev}"
 }
-
+RECOVERY_KEY_LIST=short_recovery_keys.txt
+if [ -f /etc/lsb-release ]; then
+	BOARD=$(grep -m 1 "^CHROMEOS_RELEASE_BOARD=" /etc/lsb-release)
+	BOARD="${BOARD#*=}"
+	BOARD="${BOARD%-signed-*}"
+else
+  curl -LO https://raw.githubusercontent.com/MercuryWorkshop/sh1mmer/beautifulworld/wax/payloads/short_recovery_keys.txt
+	[ -f "$RECOVERY_KEY_LIST" ] || fail "Missing recovery key list!"
+	TMPFILE=$(mktemp)
+	flashrom -i GBB -r "$TMPFILE" >/dev/null 2>&1
+	futility gbb -g --recoverykey="$TMPFILE".vbpubk "$TMPFILE" >/dev/null 2>&1
+	recoverykeysum=$(futility show "$TMPFILE".vbpubk | grep "Key sha1sum" | sed "s/ *Key sha1sum: *//")
+	BOARD=$(grep ";$recoverykeysum" "$RECOVERY_KEY_LIST" | cut -d";" -f1)
+	BOARD="${BOARD#board:}"
+	rm "$TMPFILE" "$TMPFILE".vbpubk
+fi
+echo "Found board:  $BOARD"
 . /usr/sbin/write_gpt.sh
 load_base_vars
 TARGET_DEVICE=$(get_fixed_dst_drive)
@@ -73,7 +88,20 @@ if echo "$TARGET_DEVICE" | grep -q '[0-9]$'; then
 else
 	TARGET_DEVICE_P="$TARGET_DEVICE"
 fi
+arch=$(uname -m)
 
+case "$arch" in
+    x86_64)
+        tar_url="https://github.com/aspect-build/bsdtar-prebuilt/releases/latest/download/tar_linux_amd64"
+        ;;
+    aarch64)
+        tar_url="https://github.com/aspect-build/bsdtar-prebuilt/releases/latest/download/tar_linux_arm64"
+        ;;
+    *)
+        echo "Unsupported architecture: $arch"
+        exit 1
+        ;;
+esac
 echo "Found internal disk: $TARGET_DEVICE"
 echo "Found partition selection:  $TARGET_DEVICE_P"
 findimage
@@ -96,6 +124,8 @@ dd if="$LOOPDEV"p3 of="$TARGET_DEVICE_P"3 bs=1M
 cd /
 echo "Wipping stateful by removing its contents" #we cant do mkfs.ext4 because of cryptohome issues
 rm -rf /stateful/*
+echo "Touching .developer_mode"
+touch /stateful/.developer_mode
 umount /stateful
 echo "Done! Dropping shell..."
 /bin/sh
