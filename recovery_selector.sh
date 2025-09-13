@@ -1,5 +1,4 @@
 #!/bin/sh
-# This script assumes arch to be amd64. fix that sometime :)
 recoveryver=$1
 fail() {
     printf "%b\n" "$1" >&2
