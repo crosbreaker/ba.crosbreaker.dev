@@ -4,7 +4,7 @@ recoveryver=$1
 fail() {
     printf "%b\n" "$1" >&2
     printf "error occurred\n" >&2
-	sleep 3
+	losetup -d "$LOOPDEV" || fail "Failed to unmount dev1"
     umount /stateful
     exit 1
 }
@@ -135,6 +135,7 @@ echo "Wipping stateful by removing its contents" #we cant do mkfs.ext4 because o
 rm -rf /stateful/*
 echo "Touching .developer_mode"
 touch /stateful/.developer_mode
+losetup -d "$LOOPDEV" || fail "Failed to unmount dev1"
 umount /stateful
 echo "Done! Dropping shell..."
 /bin/sh
