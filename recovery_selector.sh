@@ -110,6 +110,7 @@ cd /stateful
 curl --progress-bar -k "$FINAL_URL" -o recovery.zip || fail "Failed to download recovery image"
 curl -LO "$tar_url" || fail "failed to download tar binary"
 chmod +x tar_linux_amd64
+echo "Unzipping file..."
 ./tar_linux_amd64 -xf recovery.zip || fail "failed to unzip recovery image"
 rm recovery.zip
 FILENAME=$(find . -maxdepth 2 -name "chromeos_*.bin")
