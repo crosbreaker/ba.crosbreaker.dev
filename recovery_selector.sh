@@ -4,6 +4,7 @@ recoveryver=$1
 fail() {
     printf "%b\n" "$1" >&2
     printf "error occurred\n" >&2
+	sleep 3
     umount /stateful
     exit 1
 }
