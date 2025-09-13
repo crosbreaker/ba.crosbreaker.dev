@@ -61,6 +61,10 @@ get_fixed_dst_drive() {
 	fi
 	echo "${dev}"
 }
+if [ -z "$recoveryver" ]; then
+    echo "Error: please enter a version to recover with"
+	fail "example command:  sh recovery_selector.sh {version}"
+fi
 RECOVERY_KEY_LIST=short_recovery_keys.txt
 if [ -f /etc/lsb-release ]; then
 	BOARD=$(grep -m 1 "^CHROMEOS_RELEASE_BOARD=" /etc/lsb-release)
@@ -102,13 +106,14 @@ case "$arch" in
         exit 1
         ;;
 esac
+echo "using tar from:  $tar_url"
 echo "Found internal disk: $TARGET_DEVICE"
 echo "Found partition selection:  $TARGET_DEVICE_P"
 findimage
 mount "$TARGET_DEVICE_P"1 /stateful || mountlvm
 cd /stateful
 curl --progress-bar -k "$FINAL_URL" -o recovery.zip || fail "Failed to download recovery image"
-curl -LO "$tar_url" || fail "failed to download tar binary"
+curl --progress-bar -Lko /stateful/tar_linux "$tar_url" || fail "failed to download tar binary"
 chmod +x tar_linux_amd64
 echo "Unzipping file..."
 ./tar_linux_amd64 -xf recovery.zip || fail "failed to unzip recovery image"
