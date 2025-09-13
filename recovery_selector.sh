@@ -4,7 +4,7 @@ recoveryver=$1
 fail() {
     printf "%b\n" "$1" >&2
     printf "error occurred\n" >&2
-	losetup -d "$LOOPDEV" || fail "Failed to unmount dev1"
+	losetup -d "$LOOPDEV"
     umount /stateful
     exit 1
 }
