@@ -1,4 +1,5 @@
-# This script assumes interal is mmcblk0 and arch to be amd64. fix that sometime :)
+#!/bin/sh
+# This script assumes arch to be amd64. fix that sometime :)
 board=$1
 recoveryver=$2
 mountdir="/recoveryimage"
@@ -35,9 +36,49 @@ mountlvm(){
      echo "found volume group:  $volgroup"
      mount "/dev/$volgroup/unencrypted" /stateful || fail "couldnt mount p1 or lvm group.  Please recover"
 }
+get_fixed_dst_drive() {
+	local dev
+	if [ -z "${DEFAULT_ROOTDEV}" ]; then
+		for dev in /sys/block/sd* /sys/block/mmcblk*; do
+			if [ ! -d "${dev}" ] || [ "$(cat "${dev}/removable")" = 1 ] || [ "$(cat "${dev}/size")" -lt 2097152 ]; then
+				continue
+			fi
+			if [ -f "${dev}/device/type" ]; then
+				case "$(cat "${dev}/device/type")" in
+				SD*)
+					continue;
+					;;
+				esac
+			fi
+			DEFAULT_ROOTDEV="{$dev}"
+		done
+	fi
+	if [ -z "${DEFAULT_ROOTDEV}" ]; then
+		dev=""
+	else
+		dev="/dev/$(basename ${DEFAULT_ROOTDEV})"
+		if [ ! -b "${dev}" ]; then
+			dev=""
+		fi
+	fi
+	echo "${dev}"
+}
+
+. /usr/sbin/write_gpt.sh
+load_base_vars
+TARGET_DEVICE=$(get_fixed_dst_drive)
+
+if echo "$TARGET_DEVICE" | grep -q '[0-9]$'; then
+	TARGET_DEVICE_P="$TARGET_DEVICE"p
+else
+	TARGET_DEVICE_P="$TARGET_DEVICE"
+fi
+
+echo "Found internal disk: $TARGET_DEVICE"
+echo "Found partition selection:  $TARGET_DEVICE_P"
 findimage
 mkdir "$mountdir"
-mount /dev/mmcblk0p1 /stateful || mountlvm
+mount "$TARGET_DEVICE_P"1 /stateful || mountlvm
 cd /stateful
 curl --progress-bar -k "$FINAL_URL" -o recovery.zip || fail "Failed to download recovery image"
 curl -LO https://github.com/aspect-build/bsdtar-prebuilt/releases/download/v3.8.1-fix.1/tar_linux_amd64 || fail "failed to download tar binary"
@@ -48,9 +89,13 @@ FILENAME=$(find . -maxdepth 2 -name "chromeos_*.bin")
 echo "Found recovery image from archive at $FILENAME"
 LOOPDEV=$(losetup -f) || fail "could not find an available loop"
 losetup -P "$LOOPDEV" "$FILENAME" || fail "Could not losetup image"
-mount "$LOOPDEV"p3 "$mountdir" -o ro
-echo "mounting system components"
-mount --bind /dev "$mountdir"/dev
-mount --bind /sys "$mountdir"/sys
-echo "dropping shell in image's rootfs, not sure what to do from here."
-chroot "$mountdir"
+echo "dding p4 of the image to p2 of your internal disk..."
+dd if="$LOOPDEV"p4 of="$TARGET_DEVICE_P"2 bs=1M #thanks for telling me kern-b was the copied one olyb :)
+echo "dding p3 of the image to p3 of your internal disk..."
+dd if="$LOOPDEV"p3 of="$TARGET_DEVICE_P"3 bs=1M
+cd /
+echo "Wipping stateful by removing its contents" #we cant do mkfs.ext4 because of cryptohome issues
+rm -rf /stateful/*
+umount /stateful
+echo "Done! Dropping shell..."
+/bin/sh
