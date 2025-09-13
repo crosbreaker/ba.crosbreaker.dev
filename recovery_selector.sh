@@ -11,8 +11,8 @@ fail() {
 findimage(){ # Taken from murkmod
     echo "Attempting to find recovery image from https://github.com/MercuryWorkshop/chromeos-releases-data data..."
     local mercury_data_url="https://raw.githubusercontent.com/MercuryWorkshop/chromeos-releases-data/refs/heads/main/data.json"
-    local mercury_url=$(curl -ks "$mercury_data_url" | jq -r --arg board "$BOARD" --arg version "$recoveryver" '
-      .[$BOARD].images
+    local mercury_url=$(curl -ks "$mercury_data_url" | jq -r --arg board "$board" --arg version "$recoveryver" '
+      .[$board].images
       | map(select(
           .channel == "stable-channel" and
           (.chrome_version | type) == "string" and
@@ -79,6 +79,7 @@ else
 	rm "$TMPFILE" "$TMPFILE".vbpubk
 fi
 echo "Found board:  $BOARD"
+board="$BOARD"
 . /usr/sbin/write_gpt.sh
 load_base_vars
 TARGET_DEVICE=$(get_fixed_dst_drive)
