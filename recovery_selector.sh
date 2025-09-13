@@ -135,7 +135,7 @@ echo "Wipping stateful by removing its contents" #we cant do mkfs.ext4 because o
 rm -rf /stateful/*
 echo "Touching .developer_mode"
 touch /stateful/.developer_mode
-losetup -d "$LOOPDEV" || fail "Failed to unmount dev1"
+losetup -d "$LOOPDEV" || fail "Failed to unmount loopdev"
 umount /stateful
 echo "Done! Dropping shell..."
 /bin/sh
