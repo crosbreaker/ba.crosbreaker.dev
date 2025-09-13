@@ -114,9 +114,9 @@ mount "$TARGET_DEVICE_P"1 /stateful || mountlvm
 cd /stateful
 curl --progress-bar -k "$FINAL_URL" -o recovery.zip || fail "Failed to download recovery image"
 curl --progress-bar -Lko /stateful/tar_linux "$tar_url" || fail "failed to download tar binary"
-chmod +x tar_linux_amd64
+chmod +x tar_linux
 echo "Unzipping file..."
-./tar_linux_amd64 -xf recovery.zip || fail "failed to unzip recovery image"
+./tar_linux -xf recovery.zip || fail "failed to unzip recovery image"
 rm recovery.zip
 FILENAME=$(find . -maxdepth 2 -name "chromeos_*.bin")
 echo "Found recovery image from archive at $FILENAME"
