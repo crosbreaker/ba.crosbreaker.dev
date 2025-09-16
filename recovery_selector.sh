@@ -67,6 +67,7 @@ if [ -z "$recoveryver" ]; then
     echo "Error: please enter a version to recover with"
 	fail "example command:  sh recovery_selector.sh {version}"
 fi
+#automatic board determination taken from br0ker, thanks olyb
 RECOVERY_KEY_LIST=short_recovery_keys.txt
 if [ -f /etc/lsb-release ]; then
 	BOARD=$(grep -m 1 "^CHROMEOS_RELEASE_BOARD=" /etc/lsb-release)
