@@ -8,7 +8,7 @@ fail() {
     exit 1
 }
 findimage(){ # Taken from murkmod
-    echo "Attempting to find recovery image from https://github.com/MercuryWorkshop/chromeos-releases-data data..."
+    echo "Attempting to find recovery image from the https://github.com/MercuryWorkshop/chromeos-releases-data repo..."
     local mercury_data_url="https://raw.githubusercontent.com/MercuryWorkshop/chromeos-releases-data/refs/heads/main/data.json"
     local mercury_url=$(curl -ks "$mercury_data_url" | jq -r --arg board "$board" --arg version "$recoveryver" '
       .[$board].images
