@@ -133,7 +133,7 @@ losetup -P "$LOOPDEV" "$FILENAME" || fail "Could not losetup image"
 echo "dding p4 of the image to p2 of your internal disk..."
 dd if="$LOOPDEV"p4 of="$TARGET_DEVICE_P"2 bs=1M #thanks for telling me kern-b was the copied one olyb :)
 echo "dding p3 of the image to p3 of your internal disk..."
-dd if="$LOOPDEV"p3 of="$TARGET_DEVICE_P"3 bs=16M
+dd if="$LOOPDEV"p3 of="$TARGET_DEVICE_P"3 bs=1M
 echo "Cloning to root and kern b..."
 dd if="$TARGET_DEVICE_P"2 of="$TARGET_DEVICE_P"4 bs=1M
 dd if="$TARGET_DEVICE_P"3 of="$TARGET_DEVICE_P"5 bs=1M
