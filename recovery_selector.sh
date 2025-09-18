@@ -139,7 +139,7 @@ echo "Cloning to root and kern b..."
 dd if="$TARGET_DEVICE_P"2 of="$TARGET_DEVICE_P"4 bs=1M
 dd if="$TARGET_DEVICE_P"3 of="$TARGET_DEVICE_P"5 bs=1M
 cd /
-echo "Wipping stateful by removing its contents" #we cant do mkfs.ext4 because of cryptohome issues
+echo "Wiping stateful by removing its contents" #we cant do mkfs.ext4 because of cryptohome issues
 rm -rf /stateful/*
 echo "Touching .developer_mode"
 touch /stateful/.developer_mode
