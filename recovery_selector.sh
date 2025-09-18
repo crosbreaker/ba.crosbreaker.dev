@@ -132,11 +132,11 @@ FILENAME=$(find . -maxdepth 2 -name "chromeos_*.bin")
 echo "Found recovery image from archive at $FILENAME"
 LOOPDEV=$(losetup -f) || fail "could not find an available loop"
 losetup -P "$LOOPDEV" "$FILENAME" || fail "Could not losetup image"
-echo "dding p4 of the image to p2 of your internal disk..."
+echo "dd p4 image p2 internal"
 dd if="$LOOPDEV"p4 of="$TARGET_DEVICE_P"2 bs=1M #thanks for telling me kern-b was the copied one olyb :)
-echo "dding p3 of the image to p3 of your internal disk..."
+echo "dd p3 image p3 internal"
 dd if="$LOOPDEV"p3 of="$TARGET_DEVICE_P"3 bs=1M
-echo "Cloning to root and kern b..."
+echo "Cloning root and kern a to root and kern b..."
 dd if="$TARGET_DEVICE_P"2 of="$TARGET_DEVICE_P"4 bs=1M
 dd if="$TARGET_DEVICE_P"3 of="$TARGET_DEVICE_P"5 bs=1M
 cd /
@@ -146,5 +146,6 @@ echo "Touching .developer_mode"
 touch /stateful/.developer_mode
 losetup -d "$LOOPDEV" || fail "Failed to unmount loopdev"
 umount /stateful
+rm tar_linux
 echo "Done! Dropping shell..."
 /bin/sh
