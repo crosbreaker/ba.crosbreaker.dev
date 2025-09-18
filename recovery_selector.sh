@@ -118,8 +118,9 @@ cd /stateful
 read -p "Do you want to disable dev mode on next boot (skipping the beep)?" -n 1 -r
 echo   
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-	echo "settings flag to disable dev mode on next boot..."
+	echo "setting flag to disable dev mode on next boot..."
     crossystem disable_dev_request=1
+	echo "Done! returning to main script"
 fi
 curl --progress-bar -k "$FINAL_URL" -o recovery.zip || fail "Failed to download recovery image"
 curl --progress-bar -Lko /stateful/tar_linux "$tar_url" || fail "failed to download tar binary"
