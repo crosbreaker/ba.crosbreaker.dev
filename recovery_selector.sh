@@ -148,4 +148,4 @@ losetup -d "$LOOPDEV" || fail "Failed to unmount loopdev"
 umount /stateful
 rm tar_linux
 echo "Done! Dropping shell..."
-/bin/sh
+exit
