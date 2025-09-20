@@ -55,7 +55,7 @@ crossystem block_devmode=1
 
 sleep 2
 
-dd if=/dev/random of="${CROS_DEV}" bs=1M status=progress
+dd if=/dev/urandom of="${CROS_DEV}" bs=1M status=progress
 
 if [ $? -eq 0 ]; then
     clear
