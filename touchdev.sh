@@ -7,5 +7,6 @@ mountlvm(){
 }
 mount /dev/mmcblk0p1 /stateful || mountlvm
 touch /stateful/.developer_mode
+sleep 3 # wait for disk activity to stop / write changes to disk
 umount /stateful
 echo "5 minute wait skipped"
