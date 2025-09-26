@@ -133,12 +133,19 @@ echo "Found recovery image from archive at $FILENAME"
 LOOPDEV=$(losetup -f) || fail "could not find an available loop"
 losetup -P "$LOOPDEV" "$FILENAME" || fail "Could not losetup image"
 echo "dd p4 image p2 internal"
-dd if="$LOOPDEV"p4 of="$TARGET_DEVICE_P"2 bs=1M #thanks for telling me kern-b was the copied one olyb :)
+dd if="$LOOPDEV"p4 of="$TARGET_DEVICE_P"2 bs=1M || fail "Could not copy partition to disk" #thanks for telling me kern-b was the copied one olyb :)
 echo "dd p3 image p3 internal"
-dd if="$LOOPDEV"p3 of="$TARGET_DEVICE_P"3 bs=1M
+dd if="$LOOPDEV"p3 of="$TARGET_DEVICE_P"3 bs=1M || fail "Could not copy partition to disk"
 echo "Cloning root and kern a to root and kern b..."
-dd if="$TARGET_DEVICE_P"2 of="$TARGET_DEVICE_P"4 bs=1M
-dd if="$TARGET_DEVICE_P"3 of="$TARGET_DEVICE_P"5 bs=1M
+dd if="$LOOPDEV"p4 of="$TARGET_DEVICE_P"4 bs=1M || fail "Could not copy partition to disk"
+dd if="$LOOPDEV"p3 of="$TARGET_DEVICE_P"5 bs=1M || fail "Could not copy partition to disk"
+read -p "Do you want to copy miniOS from the recovery image (will patch badapple if it is 132+)?" -n 1 -r
+echo   
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "Copying miniOS..."
+	dd if="$LOOPDEV"p9 of="$TARGET_DEVICE_P"9 bs=1M || fail "Could not copy partition to disk"
+	dd if="$LOOPDEV"p10 of="$TARGET_DEVICE_P"10 bs=1M || fail "Could not copy partition to disk"
+fi
 cd /
 echo "Wiping stateful by removing its contents" #we cant do mkfs.ext4 because of cryptohome issues
 rm -rf /stateful/*
