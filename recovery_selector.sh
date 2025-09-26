@@ -115,7 +115,7 @@ echo "Found partition selection:  $TARGET_DEVICE_P"
 findimage
 mount "$TARGET_DEVICE_P"1 /stateful || mountlvm
 cd /stateful
-read -p "Do you want to disable dev mode on next boot (skipping the beep)?" -n 1 -r
+read -p "Do you want to disable dev mode on next boot (skipping the beep)? (Y/N) " -n 1 -r
 echo   
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 	echo "setting flag to disable dev mode on next boot..."
@@ -139,7 +139,7 @@ dd if="$LOOPDEV"p3 of="$TARGET_DEVICE_P"3 bs=1M || fail "Could not copy partitio
 echo "Cloning root and kern a to root and kern b..."
 dd if="$LOOPDEV"p4 of="$TARGET_DEVICE_P"4 bs=1M || fail "Could not copy partition to disk"
 dd if="$LOOPDEV"p3 of="$TARGET_DEVICE_P"5 bs=1M || fail "Could not copy partition to disk"
-read -p "Do you want to copy miniOS from the recovery image (will patch badapple if it is 132+)?" -n 1 -r
+read -p "Do you want to copy miniOS from the recovery image (will patch badapple if it is 132+)? (Y/N) " -n 1 -r
 echo   
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "Copying miniOS..."
