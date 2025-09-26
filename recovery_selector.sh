@@ -4,7 +4,7 @@ fail() {
     printf "%b\n" "$1" >&2
     printf "error occurred\n" >&2
 	losetup -d "$LOOPDEV" > /dev/null
-    umount /stateful
+    umount /stateful > /dev/null
     exit 1
 }
 findimage(){ # Taken from murkmod
