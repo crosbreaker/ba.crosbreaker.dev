@@ -3,8 +3,8 @@ recoveryver=$1
 fail() {
     printf "%b\n" "$1" >&2
     printf "error occurred\n" >&2
-	losetup -d "$LOOPDEV" > /dev/null
-    umount /stateful > /dev/null
+	losetup -d "$LOOPDEV" > /dev/null 2>&1
+    umount /stateful > /dev/null 2>&1
     exit 1
 }
 findimage(){ # Taken from murkmod
@@ -119,7 +119,7 @@ read -p "Do you want to disable dev mode on next boot (skipping the beep)? (Y/N)
 echo   
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 	echo "setting flag to disable dev mode on next boot..."
-    crossystem disable_dev_request=1
+    crossystem disable_dev_request=1 > /dev/null 2>&1
 	echo "Done! returning to main script"
 fi
 curl --progress-bar -k "$FINAL_URL" -o recovery.zip || fail "Failed to download recovery image"
