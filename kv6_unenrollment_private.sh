@@ -1,4 +1,4 @@
-SCRIPT_DATE="[2025-9-19]"
+SCRIPT_DATE="[2025-10-22]"
 
 fail() {
     printf "%b\n" "$*" >&2
