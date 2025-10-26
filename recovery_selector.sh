@@ -1,10 +1,11 @@
 #!/bin/sh
 recoveryver=$1
+stateful_mount_point="/stateful"
 fail() {
     printf "%b\n" "$1" >&2
     printf "error occurred\n" >&2
 	losetup -d "$LOOPDEV" > /dev/null 2>&1
-    umount /stateful > /dev/null 2>&1
+    umount "$stateful_mount_point" > /dev/null 2>&1
     exit 1
 }
 findimage(){ # Taken from murkmod
@@ -34,7 +35,7 @@ mountlvm(){
      vgchange -ay #active all volume groups
      volgroup=$(vgscan | grep "Found volume group" | awk '{print $4}' | tr -d '"')
      echo "found volume group:  $volgroup"
-     mount "/dev/$volgroup/unencrypted" /stateful || fail "couldnt mount p1 or lvm group.  Please recover"
+     mount "/dev/$volgroup/unencrypted" "$stateful_mount_point" || fail "couldnt mount p1 or lvm group.  Please recover"
 }
 get_fixed_dst_drive() {
 	local dev
@@ -113,8 +114,8 @@ echo "using tar from:  $tar_url"
 echo "Found internal disk: $TARGET_DEVICE"
 echo "Found partition selection:  $TARGET_DEVICE_P"
 findimage
-mount "$TARGET_DEVICE_P"1 /stateful || mountlvm
-cd /stateful
+mount "$TARGET_DEVICE_P"1 "$stateful_mount_point" || mountlvm
+cd "$stateful_mount_point"
 read -p "Do you want to disable dev mode on next boot (skipping the beep)? (Y/N) " -n 1 -r
 echo   
 if [[ $REPLY =~ ^[Yy]$ ]]; then
@@ -125,10 +126,10 @@ fi
 read -p "Do you want to copy miniOS from the recovery image (will patch badapple if it is 132+)? (Y/N) " -n 1 -r
 echo
 curl --progress-bar -k "$FINAL_URL" -o recovery.zip || fail "Failed to download recovery image"
-curl --progress-bar -Lko /stateful/tar_linux "$tar_url" || fail "failed to download tar binary"
-chmod +x tar_linux
+curl --progress-bar -Lko "$stateful_mount_point"/tar_linux "$tar_url" || fail "failed to download tar binary"
+chmod +x "$stateful_mount_point"/tar_linux
 echo "Unzipping file..."
-./tar_linux -xf recovery.zip || fail "failed to unzip recovery image"
+"$stateful_mount_point"/tar_linux -xf recovery.zip || fail "failed to unzip recovery image"
 rm recovery.zip
 FILENAME=$(find . -maxdepth 2 -name "chromeos_*.bin")
 echo "Found recovery image from archive at $FILENAME"
@@ -149,10 +150,10 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 fi
 cd /
 echo "Wiping stateful by removing its contents" #we cant do mkfs.ext4 because of cryptohome issues
-rm -rf /stateful/*
+rm -rf "$stateful_mount_point"/*
 echo "Touching .developer_mode"
-touch /stateful/.developer_mode
+touch "$stateful_mount_point/.developer_mode"
 losetup -d "$LOOPDEV" || fail "Failed to unmount loopdev"
-umount /stateful
+umount "$stateful_mount_point"
 echo "Done! Dropping shell..."
 exit
