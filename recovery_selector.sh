@@ -154,6 +154,5 @@ echo "Touching .developer_mode"
 touch /stateful/.developer_mode
 losetup -d "$LOOPDEV" || fail "Failed to unmount loopdev"
 umount /stateful
-rm tar_linux
 echo "Done! Dropping shell..."
 exit
