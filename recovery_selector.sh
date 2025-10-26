@@ -122,6 +122,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     crossystem disable_dev_request=1 > /dev/null 2>&1
 	echo "Done! returning to main script"
 fi
+read -p "Do you want to copy miniOS from the recovery image (will patch badapple if it is 132+)? (Y/N) " -n 1 -r
+echo
 curl --progress-bar -k "$FINAL_URL" -o recovery.zip || fail "Failed to download recovery image"
 curl --progress-bar -Lko /stateful/tar_linux "$tar_url" || fail "failed to download tar binary"
 chmod +x tar_linux
@@ -140,10 +142,8 @@ dd if="$LOOPDEV"p3 of="$TARGET_DEVICE_P"3 bs=1M || fail "Could not copy partitio
 echo "Cloning root and kern a to root and kern b..."
 dd if="$LOOPDEV"p4 of="$TARGET_DEVICE_P"4 bs=1M || fail "Could not copy partition to disk"
 dd if="$LOOPDEV"p3 of="$TARGET_DEVICE_P"5 bs=1M || fail "Could not copy partition to disk"
-read -p "Do you want to copy miniOS from the recovery image (will patch badapple if it is 132+)? (Y/N) " -n 1 -r
-echo   
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Copying miniOS..."
+    echo "Copying miniOS by users request..."
 	dd if="$LOOPDEV"p9 of="$TARGET_DEVICE_P"9 bs=1M || fail "Could not copy partition to disk"
 	dd if="$LOOPDEV"p10 of="$TARGET_DEVICE_P"10 bs=1M || fail "Could not copy partition to disk"
 fi
