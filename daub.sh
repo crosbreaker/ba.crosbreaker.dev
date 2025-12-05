@@ -42,11 +42,16 @@ get_internal() {
 	if [ -z "$ROOTDEV_LIST" ]; then
 		fail "could not parse for rootdev devices. this should not have happened."
 	fi
-	local device_type=$(echo "$ROOTDEV_LIST" | grep -oE 'mmc|nvme|sda' | head -n 1)
+	local device_type=$(echo "$ROOTDEV_LIST" | grep -oE 'blk0|blk1||nvme|sda' | head -n 1)
 	case $device_type in
-	"mmc")
+	"blk0")
 		intdis=/dev/mmcblk0
   		intdis_prefix="p"
+		break
+		;;
+	"blk1")
+		intdis=/dev/mmcblk1
+			indis_prefix="p"
 		break
 		;;
 	"nvme")
