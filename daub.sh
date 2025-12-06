@@ -35,9 +35,10 @@ wipelvm(){
     chroot /localroot /sbin/vgchange -ay #active all volume groups
     volgroup=$(chroot /localroot /sbin/vgscan | grep "Found volume group" | awk '{print $4}' | tr -d '"')
     echo "found volume group: $volgroup"
-    mount "/dev/$volgroup/unencrypted" /stateful || echo "LVM stateful didn't work, attempting ext4..."
-		rm -rf /stateful/*
-		umount /stateful
+    if mount "/dev/$volgroup/unencrypted" /stateful; then
+			rm -rf /stateful/*
+			umount /stateful
+		fi
 }
 get_internal() {
 	# get_largest_cros_blockdev does not work in BadApple.
