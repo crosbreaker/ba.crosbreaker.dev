@@ -6,7 +6,11 @@ fail(){
 	printf "exiting...\n"
 	exit
 }
-
+read -p "are you sure you want to run daub?  (y/n) " -n 1 -r
+echo   
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    main
+fi
 main(){
 echo   
 get_internal
@@ -70,7 +74,7 @@ get_internal() {
 	esac
 }
 get_booted_kernnum() {
-    if $(expr $(cgpt show -n "$intdis" -i 2 -P > $(cgpt show -n "$intdis" -i 4 -P)); then
+    if $(expr $(cgpt show -n "$intdis" -i 2 -P) > $(cgpt show -n "$intdis" -i 4 -P)); then
         echo -n 2
     else
         echo -n 4
@@ -92,8 +96,3 @@ opposite_num() {
         return 1
     fi
 }
-read -p "are you sure you want to run daub?  (y/n) " -n 1 -r
-echo   
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    main
-fi
