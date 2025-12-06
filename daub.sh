@@ -51,7 +51,7 @@ get_internal() {
 		;;
 	"blk1")
 		intdis=/dev/mmcblk1
-			indis_prefix="p"
+			intdis_prefix="p"
 		break
 		;;
 	"nvme")
