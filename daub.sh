@@ -23,9 +23,7 @@ chroot /localroot cgpt add "$intdis" -i $(get_booted_kernnum) -P 10 -T 5 -S 1
         echo "w" 
     ) | chroot /localroot /sbin/fdisk "$intdis"
 crossystem disable_dev_request=1
-mount "$intdis$intdis_prefix"1 /stateful || mountlvm
-rm -rf /stateful/*
-umount /stateful
+wipelvm || chroot /localroot /sbin/mkfs.ext4 -F "$intdis$indis_prefix"p1
 for rootdir in dev proc run sys; do
   umount /localroot/"${rootdir}"
 done
@@ -33,11 +31,13 @@ umount /localroot
 rm -rf /localroot /stateful
 echo "Done!  Run reboot -f to reboot."
 }
-mountlvm(){
+wipelvm(){
     chroot /localroot /sbin/vgchange -ay #active all volume groups
     volgroup=$(chroot /localroot /sbin/vgscan | grep "Found volume group" | awk '{print $4}' | tr -d '"')
     echo "found volume group: $volgroup"
-    mount "/dev/$volgroup/unencrypted" /stateful || fail "couldnt mount p1 or lvm group. Please recover"
+    mount "/dev/$volgroup/unencrypted" /stateful || echo "LVM stateful didn't work, attempting ext4..."
+		rm -rf /stateful/*
+		umount /stateful
 }
 get_internal() {
 	# get_largest_cros_blockdev does not work in BadApple.
