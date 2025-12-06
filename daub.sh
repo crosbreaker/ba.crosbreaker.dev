@@ -6,11 +6,6 @@ fail(){
 	printf "exiting...\n"
 	exit
 }
-read -p "are you sure you want to run daub?  (y/n) " -n 1 -r
-echo   
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    main
-fi
 main(){
 echo   
 get_internal
@@ -96,3 +91,8 @@ opposite_num() {
         return 1
     fi
 }
+read -p "are you sure you want to run daub?  (y/n) " -n 1 -r
+echo   
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    main
+fi
