@@ -10,7 +10,7 @@ fail(){
 main(){
 echo   
 get_internal
-mkdir /localroot
+mkdir -p /localroot
 mount "$intdis$intdis_prefix$(get_booted_rootnum)" /localroot -o ro
 mount --bindable /dev /localroot/dev
 chroot /localroot cgpt add "$intdis" -i $(get_booted_kernnum) -P 10 -T 5 -S 1
