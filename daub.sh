@@ -24,8 +24,8 @@ chroot /localroot cgpt add "$intdis" -i $(get_booted_kernnum) -P 10 -T 5 -S 1
     ) | chroot /localroot fdisk "$intdis" 2>/dev/null
 crossystem disable_dev_request=1
 mount "$intdis$intdis_prefix"1 /stateful || mountlvm
-chroot /localroot rm -rf /stateful/*
-chroot /localroot umount /stateful
+rm -rf /stateful/*
+umount /stateful
 for rootdir in dev proc run sys; do
   umount /localroot/"${rootdir}"
 done
