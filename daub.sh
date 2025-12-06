@@ -20,7 +20,9 @@ chroot /localroot cgpt add "$intdis" -i $(get_booted_kernnum) -P 10 -T 5 -S 1
         echo "$(opposite_num $(get_booted_kernnum))"
         echo "d"
         echo "$(opposite_num $(get_booted_rootnum))"
-        echo "w"
+        # echo "w" (commented due to testing)
+				echo "p"
+				echo "q" # debugging stuff
     ) | chroot /localroot fdisk "$intdis" 2>/dev/null
 crossystem disable_dev_request=1
 chroot /localroot mount "$intdis$intdis_prefix"1 /stateful || mountlvm
