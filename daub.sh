@@ -29,6 +29,7 @@ umount /stateful
 for rootdir in dev proc run sys; do
   umount /localroot/"${rootdir}"
 done
+umount /localroot
 rm -rf /localroot /stateful
 echo "Done!  Run reboot -f to reboot."
 }
