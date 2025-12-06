@@ -70,7 +70,7 @@ get_internal() {
 	esac
 }
 get_booted_kernnum() {
-    if (($(cgpt show -n "$intdis" -i 2 -P) > $(cgpt show -n "$intdis" -i 4 -P))); then
+    if $(expr $(cgpt show -n "$intdis" -i 2 -P > $(cgpt show -n "$intdis" -i 4 -P)); then
         echo -n 2
     else
         echo -n 4
