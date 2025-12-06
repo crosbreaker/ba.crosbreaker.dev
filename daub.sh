@@ -11,7 +11,9 @@ echo
 get_internal
 mkdir -p /localroot
 mount "$intdis$intdis_prefix$(get_booted_rootnum)" /localroot -o ro
-mount --bindable /dev /localroot/dev
+for rootdir in dev proc run sys; do
+	mount --bindable "${rootdir}" /localroot/"${rootdir}"
+done
 chroot /localroot cgpt add "$intdis" -i $(get_booted_kernnum) -P 10 -T 5 -S 1
     (
         echo "d"
@@ -20,20 +22,20 @@ chroot /localroot cgpt add "$intdis" -i $(get_booted_kernnum) -P 10 -T 5 -S 1
         echo "$(opposite_num $(get_booted_rootnum))"
         echo "w"
     ) | chroot /localroot fdisk "$intdis" 2>/dev/null
-umount /localroot/dev
-umount /localroot
-rmdir /localroot
 crossystem disable_dev_request=1
-mount "$intdis$intdis_prefix"1 /stateful || mountlvm
-rm -rf /stateful/*
-umount /stateful
+chroot /localroot mount "$intdis$intdis_prefix"1 /stateful || mountlvm
+chroot /localroot rm -rf /stateful/*
+chroot /localroot umount /stateful
+for rootdir in dev proc run sys; do
+  umount /localroot/"${rootdir}"
+done
 echo "Done!  Run reboot -f to reboot."
 }
 mountlvm(){
-     vgchange -ay #active all volume groups
-     volgroup=$(vgscan | grep "Found volume group" | awk '{print $4}' | tr -d '"')
-     echo "found volume group:  $volgroup"
-     mount "/dev/$volgroup/unencrypted" /stateful || fail "couldnt mount p1 or lvm group.  Please recover"
+     chroot /localroot vgchange -ay #active all volume groups
+     chroot /localroot volgroup=$(vgscan | grep "Found volume group" | awk '{print $4}' | tr -d '"')
+     chroot /localroot echo "found volume group:  $volgroup"
+     chroot /localroot mount "/dev/$volgroup/unencrypted" /stateful || fail "couldnt mount p1 or lvm group.  Please recover"
 }
 get_internal() {
 	# get_largest_cros_blockdev does not work in BadApple.
