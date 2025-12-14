@@ -23,7 +23,7 @@ chroot /localroot cgpt add "$intdis" -i $(get_booted_kernnum) -P 10 -T 5 -S 1
         echo "w" 
     ) | chroot /localroot /sbin/fdisk "$intdis"
 crossystem disable_dev_request=1
-wipelvm || chroot /localroot /sbin/mkfs.ext4 -F "$intdis$indis_prefix"p1
+wipelvm || chroot /localroot /sbin/mkfs.ext4 -F "$intdis$intdis_prefix"1
 for rootdir in dev proc run sys; do
   umount /localroot/"${rootdir}"
 done
