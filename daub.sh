@@ -14,7 +14,7 @@ mount "$intdis$intdis_prefix$(get_booted_rootnum)" /localroot -o ro
 for rootdir in dev proc run sys; do
 	mount --bindable "${rootdir}" /localroot/"${rootdir}"
 done
-chroot /localroot cgpt add "$intdis" -i $(get_booted_kernnum) -P 10 -T 5 -S 1
+chroot /localroot /sbin/cgpt add "$intdis" -i $(get_booted_kernnum) -P 10 -T 5 -S 1
     (
         echo "d"
         echo "$(opposite_num $(get_booted_kernnum))"
