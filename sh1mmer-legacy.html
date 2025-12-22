@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>sh1mmer legacy downloads</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root {
+  --bg: #0b0e14;
+  --panel: #111827;
+  --border: #1f2937;
+  --text: #e5e7eb;
+  --muted: #9ca3af;
+  --accent: #22d3ee;
+  --accent-dim: #0891b2;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: radial-gradient(1000px 500px at 15% -10%, #0f172a, var(--bg));
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+}
+
+header {
+  text-align: center;
+  padding: 2.5rem 1rem 1.5rem;
+}
+
+header h1 {
+  margin: 0;
+  letter-spacing: 0.15em;
+}
+
+main {
+  max-width: 1200px;
+  margin: auto;
+  padding: 1rem;
+}
+
+.panel {
+  background: linear-gradient(180deg, #020617, var(--panel));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+}
+
+thead {
+  background: #020617;
+}
+
+thead th {
+  padding: 0.8rem 1rem;
+  text-align: left;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+
+tbody tr:hover {
+  background: rgba(34, 211, 238, 0.06);
+}
+
+td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.filename {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.filename:hover {
+  text-decoration: underline;
+}
+
+.size {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.hash {
+  color: var(--muted);
+  font-size: 0.75rem;
+  word-break: break-all;
+}
+
+.download {
+  color: var(--accent);
+  border: 1px solid var(--accent-dim);
+  padding: 0.35rem 0.7rem;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.download:hover {
+  background: rgba(34, 211, 238, 0.15);
+}
+
+footer {
+  max-width: 1200px;
+  margin: 2rem auto 3rem;
+  padding: 0 1rem;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+}
+</style>
+</head>
+
+<body>
+<header>
+  <h1>sh1mmer legacy</h1>
+</header>
+
+<main>
+<div class="panel">
+<table>
+<thead>
+<tr>
+  <th>Filename</th>
+  <th>Size</th>
+  <th>SHA-256</th>
+  <th></th>
+</tr>
+</thead>
+<tbody id="rows"></tbody>
+</table>
+</div>
+</main>
+
+<footer>
+  no warranty
+</footer>
+
+<script>
+const BASE_URL =
+  "https://github.com/crosbreaker/sh1mmer/releases/download/legacy/";
+
+const boards = [
+  { name: "ambassador-legacy.zip", size: "89.5 MB", sha: "afe84ae1c0a7b2e03da4c73fed1411d88cfa5fe362c4021cc69e8912eb3b7b1a" },
+  { name: "banon-legacy.zip", size: "79.8 MB", sha: "abbbec8aee961a82b8603ced8354d24e0f20502d2f4b6331bdbd0476555a50f2" },
+  { name: "brask-legacy.zip", size: "94 MB", sha: "6f2978e897131e73c3c3ce3ba58cf963f969f79a9b3999b2dbc05e6e2e0db8ca" },
+  { name: "brya-legacy.zip", size: "126 MB", sha: "964a8415fbd2fcf67678ea9cb33483aa42f9ed194dfc592a64b23cfb06dccafb" },
+  { name: "clapper-legacy.zip", size: "91.5 MB", sha: "9850d598c1c45f207ec014b75172885f0419719277ef8b59eea6255552badab9" },
+  { name: "coral-legacy.zip", size: "89.6 MB", sha: "251bde963439a584382ee3cc23696ab16c4092d1903ef0cf5c8e160d4061f9d9" },
+  { name: "corsola-legacy.zip", size: "176 MB", sha: "29715b284cd75f93d333bef629e7cb5df81ebcfed02f8fda9b487aa87d994f8e" },
+  { name: "cyan-legacy.zip", size: "79.9 MB", sha: "ae01eecc18ae34d69a18ebed45b882d76e622fe6a32a05605b8a36848553f591" },
+  { name: "dedede-legacy.zip", size: "113 MB", sha: "4895bf70b5d311b94492830ea6710fcb5727351430801b9422276f492a92ce48" },
+  { name: "edgar-legacy.zip", size: "78.3 MB", sha: "52b67fdee190a480f64b125c563b0af3c17d2c03b24b929c1756c523b2247a06" },
+  { name: "elm-legacy.zip", size: "77.5 MB", sha: "c2d9d353b061d06eb6b82baebcc67bbda2ac521f3b9fa66976b06deadbfe61b1" },
+  { name: "enguarde-legacy.zip", size: "77.2 MB", sha: "962e67431411cc87c874a7c0eb64b4c995d4f03e349fa9a29c8d9bbd6b233697" },
+  { name: "fizz-legacy.zip", size: "87.4 MB", sha: "3c68af31159cb4271d2b8dafde1069cdeeccebaeb98f15bdaa6904b9f60f3f08" },
+  { name: "glimmer-legacy.zip", size: "91.5 MB", sha: "2c55121dc871606e664c1045f6c5efb4e3f7fe1db0f0a500b561c6cd0e49ee08" },
+  { name: "grunt-legacy.zip", size: "93.2 MB", sha: "5da62fc3f1cb2ea5d3ce08d49f6818ce9ec7dfefff609ac8433baf95b0b357b8" },
+  { name: "hana-legacy.zip", size: "76.2 MB", sha: "50b7c9d4f15cf4d890197ef0fbc2589ff8a71b28f90617d0f2db87f72ecdd6c6" },
+  { name: "hatch-legacy.zip", size: "175 MB", sha: "d18edd0ab8e11777be6277ec18c6b11465f5d204be634dca5ad8148317805df9" },
+  { name: "jacuzzi-legacy.zip", size: "164 MB", sha: "503d18a78b86a59a245dc93f95c7ea812f3ea721dbee73ade2422202d3c2381b" },
+  { name: "kalista-legacy.zip", size: "90.7 MB", sha: "054d484226bf0aa2b39232f0374fd1c140b122fafc9ead81b9da54486839fbc8" },
+  { name: "kefka-legacy.zip", size: "79.9 MB", sha: "50855ef56762138f593efbcfbbd14ef5ca3cec60ba733dc6f97983412b261a1e" },
+  { name: "kukui-legacy.zip", size: "163 MB", sha: "bac9e09d0f1329d3faad5a0987c9b877052acde52051bfddbdbb83be55207fe4" },
+  { name: "lulu-legacy.zip", size: "79.6 MB", sha: "34eef84c05faea18481b370842eeea28a0fbae68411b9c76e142da589e3a0a70" },
+  { name: "nami-legacy.zip", size: "90 MB", sha: "f4a5cdb83690e8ce46e352bc691f15e0e7445031ff7ee0a9be942f6893370e46" },
+  { name: "nissa-legacy.zip", size: "197 MB", sha: "22b5755ece18c86d69df738e5f8ce0e6130acec2752f51d5c4f50690440aebc6" },
+  { name: "octopus-legacy.zip", size: "178 MB", sha: "b7bbce71e52f1e0e10bb5c3323322b30c23a25f96372806538f846c77f63fb55" },
+  { name: "orco-legacy.zip", size: "77.6 MB", sha: "64a129cf8dd57658ef2d179ec336503ca7f940c7df689dfbf81d99300d48fa65" },
+  { name: "puff-legacy.zip", size: "83.7 MB", sha: "4cf1d06de674c8172e30d1f2fd26e66ee2ff8970d32260667a2858f5b9c45de9" },
+  { name: "pyro-legacy.zip", size: "81.7 MB", sha: "e28d3c1a93e32e79ebffd9ed6c1906276544368572727d758f3819c918b3951e" },
+  { name: "reef-legacy.zip", size: "80.9 MB", sha: "d85e4306de308b63945dbce335f8bad064accdb6bd5cf2fd81a33674d08303fc" },
+  { name: "reks-legacy.zip", size: "79.8 MB", sha: "e13b42e2d6920e45ed0123f5440ed09917f4235fea28623006288c592b8cb6aa" },
+  { name: "relm-legacy.zip", size: "79.9 MB", sha: "d41129324525ae840661470c4fce9881b56a847e09a36159f28efe4d3e3e205e" },
+  { name: "sand-legacy.zip", size: "81.8 MB", sha: "e0a7782355ec3fbc5b35af4188302b02deb8bc79fc8e66fc7c71f1b71041a4c5" },
+  { name: "sentry-legacy.zip", size: "81.6 MB", sha: "bcd9f08dbe7e78bcb09fcc80a6dcf41024e3b086f57264f1535709737c748f47" },
+  { name: "snappy-legacy.zip", size: "81.3 MB", sha: "7798ccb38f6130518b7309ea252e436295d6722b8d4f292fb1d0a9e7abe711d9" },
+  { name: "stout-legacy.zip", size: "151 MB", sha: "65f359579b1e58b0ee31328c27c8ded938d95d41b5e180a98d9635a6f8fad979" },
+  { name: "strongbad-legacy.zip", size: "119 MB", sha: "1cf2fae1faf694a099b78d0c1e2d7c42e96fc28b4615931445f3c6a40fd14fd9" },
+  { name: "tidus-legacy.zip", size: "82.6 MB", sha: "03c3ec200cf700c8875ac299e8db43dde0d9df28ba6e5f0a16ad79e1b1c081d4" },
+  { name: "trogdor-legacy.zip", size: "114 MB", sha: "f7fddd7d865fc036d9477dbdd3bed158c7e5780ca3e89186c5b3e4265e9c51c6" },
+  { name: "ultima-legacy.zip", size: "79.3 MB", sha: "1831bfbb41f4aa2c1fcd2dc62ab4f9433e4029c2cceee3f1a251ad7afee025a3" },
+  { name: "volteer-legacy.zip", size: "94.1 MB", sha: "06c7dbe6098476985473d2414d949c61db199f636cdf28f95da20b0a809e666d" },
+  { name: "zork-legacy.zip", size: "182 MB", sha: "f561670e57f8bb142e77bf294d8ba307fac7978c081472cf0aaf811398bb509a" }
+];
+
+const tbody = document.getElementById("rows");
+
+for (const b of boards) {
+  const url = BASE_URL + b.name;
+  tbody.insertAdjacentHTML("beforeend", `
+    <tr>
+      <td><a class="filename" href="${url}">${b.name}</a></td>
+      <td class="size">${b.size}</td>
+      <td class="hash">${b.sha}</td>
+      <td><a class="download" href="${url}">download</a></td>
+    </tr>
+  `);
+}
+</script>
+
+</body>
+</html>
