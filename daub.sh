@@ -9,6 +9,7 @@ main(){
     . /usr/sbin/write_gpt.sh
     load_base_vars
 	intdis=$(get_fixed_dst_drive)
+	echo "$intdis"
 	if echo "$intdis" | grep -q '[0-9]$'; then
 		intdis_prefix="$intdis"p
 	else
@@ -19,7 +20,7 @@ main(){
 	for rootdir in dev proc run sys; do
 		mount --bindable "${rootdir}" /localroot/"${rootdir}"
 	done
-	clear
+	#clear
 	echo "DAUB by crosbreaker, orginally found by Hannah. Script by Con & Mariah"
 	echo "https://crosbreaker.dev"
 	echo
