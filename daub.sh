@@ -61,7 +61,8 @@ menu() {
 	elif [[ $REPLY =~ ^[3]$ ]]; then
 		exit 0
 	else
-	    echo "invalid option"
+	    clear
+		echo "invalid option"
 		menu
 	fi
 }
