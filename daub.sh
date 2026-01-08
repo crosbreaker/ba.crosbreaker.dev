@@ -1,4 +1,4 @@
-#!/bin/sh
+ #!/bin/sh
 fail(){
 	printf "$1\n"
 	printf "exiting...\n"
@@ -57,7 +57,7 @@ menu() {
 			umount /localroot/"${rootdir}"
 		done
 		umount /localroot
-		rm -rf /localroot /stateful
+		rmdir /localroot
 	elif [[ $REPLY =~ ^[3]$ ]]; then
 		exit 0
 	else
