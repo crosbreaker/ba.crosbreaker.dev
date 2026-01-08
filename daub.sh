@@ -1,38 +1,38 @@
 #!/bin/sh
-# Written mostly by HarryTarryJarry
 fail(){
 	printf "$1\n"
 	printf "exiting...\n"
 	exit
 }
 main(){
+    . /usr/sbin/write_gpt.sh
+    load_base_vars
 	intdis=$(get_fixed_dst_drive)
-	echo "$intdis"
 	if echo "$intdis" | grep -q '[0-9]$'; then
 		intdis_prefix="$intdis"p
 	else
 		intdis_prefix="$intdis"
 	fi
 	mkdir -p /localroot /stateful
-	mount "$intdis$intdis_prefix$(get_booted_rootnum)" /localroot -o ro
+	mount "$intdis_prefix$(get_booted_rootnum)" /localroot -o ro
 	for rootdir in dev proc run sys; do
 		mount --bindable "${rootdir}" /localroot/"${rootdir}"
 	done
-	#clear
+	clear
 	echo "DAUB by crosbreaker, orginally found by Hannah. Script by Con & Mariah"
 	echo "https://crosbreaker.dev"
 	echo
-	echo "(1) Fix DAUH bootlooping"
+	echo "(1) Fix DAUB bootlooping"
 	echo "(2) Setup DAUB"
 	echo "(3) Exit Utility"
 	# add undoing daub soon
 	read -p "" -n 1 -r 
 	echo
 	if [[ $REPLY =~ ^[1]$ ]]; then
-		echo "fixing daub bootloop via wiping stateful"
+		echo "Fixing DAUB bootloop via wiping stateful"
 		wipestate
 	elif [[ $REPLY =~ ^[2]$ ]]; then
-		echo "setting up daub..."
+		echo "Setting up DAUB..."
 		chroot /localroot /sbin/cgpt add "$intdis" -i $(get_booted_kernnum) -P 10 -T 5 -S 1
     		(
         		echo "d"
@@ -49,11 +49,15 @@ main(){
 		rm -rf /localroot /stateful
 	elif [[ $REPLY =~ ^[3]$ ]]; then
 		exit 0
+	else
+	    echo "invalid option"
+		main
 	fi
 read -p "Would you like to disable developer mode (skips beep) (Y/N)" -n 1 -r
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 	crossystem disable_dev_request=1
 fi
+echo
 echo "Done! Run reboot -f to reboot."
 }
 get_fixed_dst_drive() {
