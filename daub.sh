@@ -37,6 +37,7 @@ menu() {
 	echo "(2) Setup DAUB"
 	echo "(3) Exit Utility"
 	# add undoing daub soon
+	read -p "" -n 1 -r
 	echo
 	if [[ $REPLY =~ ^[1]$ ]]; then
 		echo "Fixing DAUB bootloop via wiping stateful"
