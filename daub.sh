@@ -19,6 +19,17 @@ main(){
 		mount --bindable "${rootdir}" /localroot/"${rootdir}"
 	done
 	clear
+	menu
+    echo
+    read -p "Would you like to disable developer mode (skips beep) (Y/N)" -n 1 -r
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+	    crossystem disable_dev_request=1
+    fi
+    echo
+    echo
+    echo "Done! Run reboot -f to reboot."
+}
+menu() {
 	echo "DAUB by crosbreaker, orginally found by Hannah. Script by Con & Mariah"
 	echo "https://crosbreaker.dev"
 	echo
@@ -26,7 +37,6 @@ main(){
 	echo "(2) Setup DAUB"
 	echo "(3) Exit Utility"
 	# add undoing daub soon
-	read -p "" -n 1 -r 
 	echo
 	if [[ $REPLY =~ ^[1]$ ]]; then
 		echo "Fixing DAUB bootloop via wiping stateful"
@@ -51,16 +61,8 @@ main(){
 		exit 0
 	else
 	    echo "invalid option"
-		main
+		menu
 	fi
-echo
-read -p "Would you like to disable developer mode (skips beep) (Y/N)" -n 1 -r
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-	crossystem disable_dev_request=1
-fi
-echo
-echo
-echo "Done! Run reboot -f to reboot."
 }
 get_fixed_dst_drive() {
 	local dev
