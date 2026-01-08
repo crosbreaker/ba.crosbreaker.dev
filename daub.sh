@@ -53,10 +53,12 @@ main(){
 	    echo "invalid option"
 		main
 	fi
+echo
 read -p "Would you like to disable developer mode (skips beep) (Y/N)" -n 1 -r
 if [[ $REPLY =~ ^[Yy]$ ]]; then
 	crossystem disable_dev_request=1
 fi
+echo
 echo
 echo "Done! Run reboot -f to reboot."
 }
@@ -90,12 +92,12 @@ get_fixed_dst_drive() {
 wipestate(){
     chroot /localroot /sbin/vgchange -ay #activate all volume groups
     volgroup=$(chroot /localroot /sbin/vgscan | grep "Found volume group" | awk '{print $4}' | tr -d '"')
-	if [ -f "/dev/$volgroup/unencrypted" ]; then
+	if [ -b "/dev/$volgroup/unencrypted" ]; then
 		echo "found volume group: $volgroup"
 		chroot /localroot /sbin/mkfs.ext4 -F /dev/$volgroup/unencrypted
 	else
 		echo "lvm fail, falling back on p1"
-		chroot /localroot /sbin/mkfs.ext4 -F "$intdis$intdis_prefix"1
+		chroot /localroot /sbin/mkfs.ext4 -F "$intdis_prefix"1
 	fi
 }
 get_booted_kernnum() {
