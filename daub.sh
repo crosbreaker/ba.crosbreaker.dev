@@ -33,6 +33,7 @@ main(){
 		wipestate
 	elif [[ $REPLY =~ ^[2]$ ]]; then
 		echo "Setting up DAUB..."
+		wipestate
 		chroot /localroot /sbin/cgpt add "$intdis" -i $(get_booted_kernnum) -P 10 -T 5 -S 1
     		(
         		echo "d"
@@ -41,7 +42,6 @@ main(){
         		echo "$(opposite_num $(get_booted_rootnum))"
         		echo "w" 
     		) | chroot /localroot /sbin/fdisk "$intdis"
-		wipestate
 		for rootdir in dev proc run sys; do
 			umount /localroot/"${rootdir}"
 		done
