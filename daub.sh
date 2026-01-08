@@ -6,7 +6,7 @@ fail(){
 	exit
 }
 main(){
-	echo   
+	clear
 	intdis=$(get_fixed_dst_drive)
 	if echo "$intdis" | grep -q '[0-9]$'; then
 		intdis_prefix="$intdis"p
@@ -18,11 +18,14 @@ main(){
 	for rootdir in dev proc run sys; do
 		mount --bindable "${rootdir}" /localroot/"${rootdir}"
 	done
-	echo "Would you like to:"
-	echo "1. Fix daub bootlooping"
-	echo "2. Setup daub"
-	read -p "" -n 1 -r
-	echo   
+	echo "DAUB by crosbreaker, orginally found by scottie. Script by Con & Mariah"
+	echo "https://crosbreaker.dev"
+	echo
+	echo "(1) Fix daub bootlooping"
+	echo "(2) Setup daub"
+	echo "(3) Exit Utility"
+	# add undoing daub soon
+	read -p "" -n 1 -r 
 	if [[ $REPLY =~ ^[1]$ ]]; then
 		echo "fixing daub bootloop via wiping stateful"
 		wipestate
@@ -36,14 +39,19 @@ main(){
         		echo "$(opposite_num $(get_booted_rootnum))"
         		echo "w" 
     		) | chroot /localroot /sbin/fdisk "$intdis"
-		crossystem disable_dev_request=1
 		wipestate
 		for rootdir in dev proc run sys; do
 			umount /localroot/"${rootdir}"
 		done
 		umount /localroot
 		rm -rf /localroot /stateful
+	elif [[ $REPLY =~ ^[3]$ ]]; then
+		exit 0
 	fi
+read -p "Would you like to disable developer mode (skips beep) (Y/N)" -n 1 -r
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+	crossystem disable_dev_request=1
+fi
 echo "Done!  Run reboot -f to reboot."
 }
 get_fixed_dst_drive() {
@@ -78,10 +86,10 @@ wipestate(){
     volgroup=$(chroot /localroot /sbin/vgscan | grep "Found volume group" | awk '{print $4}' | tr -d '"')
 	if [ -f "/dev/$volgroup/unencrypted" ]; then
 		echo "found volume group: $volgroup"
-		mkfs.ext4 -F /dev/$volgroup/unencrypted
+		chroot /localroot /sbin/mkfs.ext4 -F /dev/$volgroup/unencrypted
 	else
 		echo "lvm fail, falling back on p1"
-		mkfs.ext4 -F "$intdis$intdis_prefix"1
+		chroot /localroot /sbin/mkfs.ext4 -F "$intdis$intdis_prefix"1
 	fi
 }
 get_booted_kernnum() {
@@ -107,8 +115,4 @@ opposite_num() {
         return 1
     fi
 }
-read -p "are you sure you want to run daub?  (y/n) " -n 1 -r
-echo   
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    main
-fi
+main
