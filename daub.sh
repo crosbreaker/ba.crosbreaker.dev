@@ -6,8 +6,6 @@ fail(){
 	exit
 }
 main(){
-    . /usr/sbin/write_gpt.sh
-    load_base_vars
 	intdis=$(get_fixed_dst_drive)
 	echo "$intdis"
 	if echo "$intdis" | grep -q '[0-9]$'; then
