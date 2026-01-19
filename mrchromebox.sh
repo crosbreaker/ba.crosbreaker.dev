@@ -7,6 +7,7 @@ mount --bind /proc /usb/proc
 mount --bind /sys /usb/sys
 mount --bind /run /usb/run
 mount --bind /tmp /usb/tmp
+mount --bind /usb/bin /usb/usr/bin
 cd /tmp
 curl -LO https://mrchromebox.tech/firmware-util.sh
 cd /
