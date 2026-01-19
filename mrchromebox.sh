@@ -10,4 +10,7 @@ mount --bind /tmp /usb/tmp
 cd /tmp
 curl -LO https://mrchromebox.tech/firmware-util.sh
 cd /
-chroot usb bash /tmp/firmware-util.sh
+#write script out to /tmp (idk if there is a better way to do this lol
+echo "cd /tmp" > /tmp/payload.sh
+echo "bash /tmp/firmware-util.sh" >> /tmp/payload.sh
+chroot /usb bash /tmp/payload.sh
