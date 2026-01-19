@@ -11,7 +11,11 @@ mount --bind /usb/bin /usb/usr/bin
 cd /tmp
 curl -LO https://mrchromebox.tech/firmware-util.sh
 cd /
-#write script out to /tmp (idk if there is a better way to do this lol
+#write script out to /tmp (idk if there is a better way to do this lol)
 echo "cd /tmp" > /tmp/payload.sh
 echo "bash /tmp/firmware-util.sh" >> /tmp/payload.sh
 chroot /usb bash /tmp/payload.sh
+umount /usb/*
+umount /usb
+sync
+echo "exiting to minios shell"
